@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Resume Builder</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+<!-- Add Bootstrap JavaScript -->
+
+
+    <style>
+        /* Add your CSS styles here */
+       /* Body Styles */
+body {
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container Styles */
+.container {
+    background: linear-gradient(45deg, #0066cc, #3399ff);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    margin-top: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    color: #fff;
+}
+
+/* Heading Styles */
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Form Styles */
+form {
+    margin-bottom: 20px;
+}
+
+/* Label Styles */
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Input Styles */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: background-color 0.3s ease-in-out;
+    color: #333;
+}
+
+/* Input Hover Styles */
+.form-control:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Button Styles */
+#generateBtn {
+    background: linear-gradient(45deg, #ff6600, #ff9933);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+#downloadBtn{
+    background: linear-gradient(45deg, #ff6600, #ff9933);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+/* Button Hover Styles */
+#generateBtn:hover {
+    background: linear-gradient(45deg, #ff3300, #ff6600);
+}
+#downloadBtn:hover{
+    background: linear-gradient(45deg, #ff3300, #ff6600);
+
+}
+
+/* Preview Section Styles */
+#preview {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #000;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Resume Builder</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link" href="#">Generate Resume</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+    <div class="container mt-5">
+        <h1 class="mt-5 mb-4">Online Resume Builder</h1>
+        <form id="resumeForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" required><br><br>
+        
+            </div>
+            <div class="mb-3">
+                <label for="education" class="form-label">Education:</label>
+                <textarea id="education" name="education" rows="4" cols="50" class="form-control" required></textarea><br><br>
+            </div>
+            <div class="mb-3">
+                <label for="experience" class="form-label">Work Experience:</label>
+        <textarea id="experience" name="experience" rows="4" cols="50" class="form-control" required></textarea><br><br>
+            </div>
+            
+            <div class="mb-3">
+                <label for="skills" class="form-label">Skills:</label>
+        <textarea id="skills" name="skills" rows="4" cols="50" class="form-control" required></textarea><br><br>
+            </div> 
+            <div class="d-flex justify-content-center">
+                
+                <button id="generateBtn" class="btn btn-primary m-2">Generate Resume</button>
+                <button id="downloadBtn" class="btn btn-primary m-2">Download Resume</button>
+            </div>       
+        </form>
+        <h2 class="mt-4">Preview:</h2>
+        <div id="preview" class="border p-3 ">
+        </div>
+    </div>
+    <script>
+        // JavaScript code for handling form inputs and live preview
+        const resumeForm = document.getElementById('resumeForm');
+        const preview = document.getElementById('preview');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        // Update the resume preview when the form changes
+        resumeForm.addEventListener('input', () => {
+            updatePreview();
+        });
+        
+        // Function to update the resume preview
+        function updatePreview() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const education = document.getElementById('education').value;
+            const experience = document.getElementById('experience').value;
+            const skills = document.getElementById('skills').value;
+            
+            const resumeHTML = `
+                <h3>${name}</h3>
+                <p>Email: ${email}</p>
+                <h4>Education:</h4>
+                <p>${education}</p>
+                <h4>Work Experience:</h4>
+                <p>${experience}</p>
+                <h4>Skills:</h4>
+                <p>${skills}</p>
+            `;
+            
+            preview.innerHTML = resumeHTML;
+        }
+        
+        // Generate and download the resume
+        generateBtn.addEventListener('click', () => {
+            const resumeHTML = preview.innerHTML;
+            
+            // You can implement code to convert this HTML to PDF or download as HTML
+            // For simplicity, we'll just display the HTML in a new window
+            const newWindow = window.open();
+            newWindow.document.open();
+            newWindow.document.write(resumeHTML);
+            newWindow.document.close();
+        });
+
+
+        downloadBtn.addEventListener('click', () => {
+        const resumeHTML = preview.innerHTML;
+
+        // Define the content for the PDF
+        const pdfContent = {
+            content: [
+                {
+                    text: 'Resume',
+                    style: 'header',
+                },
+                {
+                    text: 'Name: ' + document.getElementById('name').value,
+                    margin: [0, 10],
+                },
+                {
+                    text: 'Email: ' + document.getElementById('email').value,
+                    margin: [0, 10],
+                },
+                {
+                    text: 'Education:',
+                    style: 'subheader',
+                    margin: [0, 10],
+                },
+                {
+                    text: document.getElementById('education').value,
+                    margin: [0, 10],
+                },
+                {
+                    text: 'Work Experience:',
+                    style: 'subheader',
+                    margin: [0, 10],
+                },
+                {
+                    text: document.getElementById('experience').value,
+                    margin: [0, 10],
+                },
+                {
+                    text: 'Skills:',
+                    style: 'subheader',
+                    margin: [0, 10],
+                },
+                {
+                    text: document.getElementById('skills').value,
+                    margin: [0, 10],
+                },
+            ],
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    alignment: 'center',
+                },
+                subheader: {
+                    fontSize: 14,
+                    bold: true,
+                    margin: [0, 5],
+                },
+            },
+        };
+
+        // Create the PDF document
+        const pdfDoc = pdfMake.createPdf(pdfContent);
+
+        // Download the PDF
+        pdfDoc.download('resume.pdf');
+    });
+
+    </script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
