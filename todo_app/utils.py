@@ -1,4 +1,3 @@
-# utils.py
 import sqlite3
 
 def add_task(title, description, priority, due_date):
